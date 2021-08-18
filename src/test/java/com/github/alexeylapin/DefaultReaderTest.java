@@ -10,7 +10,7 @@ public class DefaultReaderTest {
     void name() {
         File file = new File("screenshot.png");
         Batch batch;
-        try (DefaultReader reader = new DefaultReader(new ZxingQREncoder(), file, Integer.MAX_VALUE)) {
+        try (DefaultReader reader = new DefaultReader(new ZxingImageEncoder(), null, file, Integer.MAX_VALUE)) {
             batch = reader.read();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -22,7 +22,7 @@ public class DefaultReaderTest {
     void name2() {
         File file = new File("screenshot.png");
         Batch batch;
-        try (DefaultReader reader = new DefaultReader(new ZxingQREncoder(), file, 20)) {
+        try (DefaultReader reader = new DefaultReader(new ZxingImageEncoder(), null, file, 20)) {
             batch = reader.read();
             System.out.println(batch.getImages().size());
             batch = reader.read();

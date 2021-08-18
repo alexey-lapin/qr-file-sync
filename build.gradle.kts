@@ -16,6 +16,7 @@ dependencies {
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.google.zxing:javase:3.4.1")
 
+    testImplementation("org.assertj:assertj-core:3.20.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
 }
 

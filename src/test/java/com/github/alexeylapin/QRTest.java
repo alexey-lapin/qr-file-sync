@@ -26,7 +26,7 @@ public class QRTest {
 
     @Test
     void name() {
-        ZxingQREncoder encoder = new ZxingQREncoder();
+        ZxingImageEncoder encoder = new ZxingImageEncoder();
         String string = getString("A", 4296);
         System.out.println(string.length());
         encoder.encode(string);
@@ -34,7 +34,7 @@ public class QRTest {
 
     @Test
     void name1() {
-        ZxingQREncoder encoder = new ZxingQREncoder();
+        ZxingImageEncoder encoder = new ZxingImageEncoder();
         String string = getString("a", 2953);
         System.out.println(string.length());
         encoder.encode(string);
@@ -43,7 +43,7 @@ public class QRTest {
     @Test
     void name11() {
         byte[] bytes = new byte[2685];
-        ZxingQREncoder encoder = new ZxingQREncoder();
+        ZxingImageEncoder encoder = new ZxingImageEncoder();
 //        String string = getString("a", 2953);
         String string = new Base32().encodeToString(bytes);
         System.out.println(string.length());
@@ -53,7 +53,7 @@ public class QRTest {
     @Test
     void name12() throws Exception {
         byte[] bytes = new byte[2685];
-        ZxingQREncoder encoder = new ZxingQREncoder(null, 50);
+        ZxingImageEncoder encoder = new ZxingImageEncoder(null, 50);
         String string = new Base32().encodeToString(bytes);
         BufferedImage image = encoder.encode(string);
         ImageIO.write(image, "png", new File("image.png"));

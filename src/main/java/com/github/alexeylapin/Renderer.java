@@ -10,11 +10,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-public class Renderer2 {
+public class Renderer {
 
     private final JFrame jFrame = new JFrame("Demo");
     private final JLabel jLabel = new JLabel();
@@ -26,7 +25,7 @@ public class Renderer2 {
     private Batch batch;
 //    private List<BufferedImage> images;
 
-    public Renderer2(Supplier<Batch> supplier) {
+    public Renderer(Supplier<Batch> supplier) {
         this.supplier = supplier;
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -38,9 +37,12 @@ public class Renderer2 {
                 panel.add(jLabel);
                 panel.add(field);
                 panel.add(button);
+                jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 jFrame.getContentPane().add(panel, BorderLayout.CENTER);
+                System.out.println(jFrame.getContentPane().getSize());
                 jFrame.pack();
+                System.out.println(jFrame.getContentPane().getSize());
                 jFrame.setLocationRelativeTo(null);
                 jFrame.setVisible(true);
             }

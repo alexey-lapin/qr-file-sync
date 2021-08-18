@@ -1,7 +1,5 @@
 package com.github.alexeylapin;
 
-import org.apache.commons.codec.binary.Base32;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,26 +8,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class DefaultReader implements Reader {
 
-    private final Base32 BASE32 = new Base32(true);
-    private final QREncoder qrEncoder;
+    private final DataEncoder dataEncoder;
+    private final ImageEncoder imageEncoder;
 
     private final File file;
     private final InputStream source;
     private final int batch;
-    private int index = 0;
+
+    private int chunkIndex = 0;
     private int batchIndex = 0;
-    private int batchStartIndex = 0;
-    private int batchEndIndex = 0;
     private boolean finished = false;
 
-    public DefaultReader(QREncoder qrEncoder, File file, int batch) {
+    public DefaultReader(ImageEncoder imageEncoder, DataEncoder dataEncoder, File file, int batch) {
         try {
-            this.qrEncoder = qrEncoder;
+            this.imageEncoder = imageEncoder;
+            this.dataEncoder = dataEncoder;
             this.file = file;
             this.source = new BufferedInputStream(new FileInputStream(file));
             this.batch = batch;
@@ -44,10 +41,12 @@ public class DefaultReader implements Reader {
             return null;
         }
         List<BufferedImage> images = new ArrayList<>();
-        batchStartIndex = index;
+        int batchStartIndex = chunkIndex;
         int count = -1;
         while (images.size() < batch) {
-            int length = 2685 - getPrefixLength();
+            Chunk chunk = new Chunk(chunkIndex, null);
+            int length = imageEncoder.getCapacity() - dataEncoder.calculateBytes(chunk.getPrefix());
+            // TODO: maybe make header of fixed length and reuse buffer?
             byte[] bytes = new byte[length];
             try {
                 count = source.read(bytes);
@@ -58,23 +57,29 @@ public class DefaultReader implements Reader {
                 finished = true;
                 break;
             }
+            // TODO: add padding
             if (count < length) {
                 bytes = Arrays.copyOf(bytes, count);
             }
-            String string = index + "+" + BASE32.encodeToString(bytes).replaceAll("=", "+");
-            BufferedImage image = qrEncoder.encode(string);
+
+//            String payload = chunkIndex + Marker.DELIMITER + dataEncoder.encode(bytes);
+            String payload = chunk.withData(dataEncoder.encode(bytes)).render();
+            BufferedImage image = imageEncoder.encode(payload);
             images.add(image);
-            index++;
+            chunkIndex++;
         }
-        batchEndIndex = index -1;
-        String marker = "M+" + batchIndex + "+" + batchStartIndex + "+" + batchEndIndex;
-        BufferedImage image = qrEncoder.encode(marker);
-        images.add(image);
+        int batchEndIndex = chunkIndex - 1;
+
+        String batchMarker = new BatchMarker(batchIndex, batchStartIndex, batchEndIndex).render();
+        BufferedImage batchMarkerImage = imageEncoder.encode(batchMarker);
+        images.add(batchMarkerImage);
+
         if (count == -1) {
-            marker = "T+" + batchEndIndex + "+" + file.getName();
-            image = qrEncoder.encode(marker);
-            images.add(image);
+            String transmissionMarker = new TransmissionMarker(batchEndIndex + 1, file.getName(), "?").render();
+            BufferedImage transmissionMarkerImage = imageEncoder.encode(transmissionMarker);
+            images.add(transmissionMarkerImage);
         }
+
         Batch batch = new Batch(batchIndex, batchStartIndex, batchEndIndex, images);
         batchIndex++;
         return batch;
@@ -85,12 +90,12 @@ public class DefaultReader implements Reader {
         source.close();
     }
 
-    private int getPrefixLength() {
-        int prefixLength = (index + ".").getBytes().length;
-        if (prefixLength % 5 == 0) {
-            return prefixLength;
-        }
-        return (prefixLength + 5) - (prefixLength % 5);
-    }
+//    private int getPrefixLength() {
+//        int prefixLength = (chunkIndex + ".").getBytes().length;
+//        if (prefixLength % 5 == 0) {
+//            return prefixLength;
+//        }
+//        return (prefixLength + 5) - (prefixLength % 5);
+//    }
 
 }

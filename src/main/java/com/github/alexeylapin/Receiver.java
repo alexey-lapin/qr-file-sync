@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Receiver2 {
+public class Receiver {
 
     private int parts = Integer.MAX_VALUE;
     public String fileName = "";
