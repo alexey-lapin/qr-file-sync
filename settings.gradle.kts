@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "pg-zxing"
+rootProject.name = "qr-file-sync"
