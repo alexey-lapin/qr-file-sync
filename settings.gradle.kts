@@ -1,3 +1,9 @@
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
 pluginManagement {
     plugins {
         id("com.diffplug.spotless") version "5.14.2"
@@ -7,3 +13,4 @@ pluginManagement {
 }
 
 rootProject.name = "qr-file-sync"
+include("core")
