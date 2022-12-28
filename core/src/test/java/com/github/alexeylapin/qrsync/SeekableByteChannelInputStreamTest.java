@@ -1,29 +1,13 @@
 package com.github.alexeylapin.qrsync;
 
-import com.google.common.jimfs.Jimfs;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-class SeekableByteChannelInputStreamTest {
-
-    private FileSystem fileSystem;
-
-    @BeforeEach
-    void setUp() {
-        fileSystem = Jimfs.newFileSystem();
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        fileSystem.close();
-    }
+class SeekableByteChannelInputStreamTest extends VirtualFileSystemSupport {
 
     @Test
     void name() throws IOException {
@@ -36,7 +20,7 @@ class SeekableByteChannelInputStreamTest {
             System.out.println(inputStream.read());
             System.out.println(inputStream.read());
             System.out.println(inputStream.read());
-            inputStream.reset();
+            inputStream.restorePosition();
             System.out.println(inputStream.read());
             System.out.println(inputStream.read());
             System.out.println(inputStream.read());
@@ -45,9 +29,9 @@ class SeekableByteChannelInputStreamTest {
             System.out.println(inputStream.read());
             inputStream.mark(0);
             System.out.println(inputStream.read());
-            inputStream.reset();
+            inputStream.restorePosition();
             System.out.println(inputStream.read());
-            inputStream.reset();
+            inputStream.restorePosition();
             System.out.println(inputStream.read());
         }
     }

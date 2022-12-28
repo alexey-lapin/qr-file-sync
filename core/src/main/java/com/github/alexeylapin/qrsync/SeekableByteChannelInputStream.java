@@ -1,31 +1,31 @@
 package com.github.alexeylapin.qrsync;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class SeekableByteChannelInputStream extends FilterInputStream {
+public class SeekableByteChannelInputStream extends InputStream {
 
     private final Deque<Long> stack;
+    private final InputStream delegate;
     private final SeekableByteChannel byteChannel;
 
     public SeekableByteChannelInputStream(SeekableByteChannel byteChannel) {
-        super(Channels.newInputStream(byteChannel));
-        this.stack = new ArrayDeque<>();
+        this.delegate = Channels.newInputStream(byteChannel);
         this.byteChannel = byteChannel;
+        this.stack = new ArrayDeque<>();
     }
 
     @Override
-    public boolean markSupported() {
-        return true;
+    public int read() throws IOException {
+        return delegate.read();
     }
 
-    @Override
-    public void mark(int readlimit) {
+    public void savePosition() {
         try {
             Long position = byteChannel.position();
             if (position != 0 && !position.equals(stack.peekLast())) {
@@ -36,9 +36,17 @@ public class SeekableByteChannelInputStream extends FilterInputStream {
         }
     }
 
-    @Override
-    public void reset() throws IOException {
+    public void restorePosition() throws IOException {
         Long position = stack.pollLast();
+        if (position == null) {
+            byteChannel.position(0);
+        } else {
+            byteChannel.position(position);
+        }
+    }
+
+    public void rewind() throws IOException {
+        Long position = stack.peekLast();
         if (position == null) {
             byteChannel.position(0);
         } else {

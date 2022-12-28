@@ -1,29 +1,21 @@
 package com.github.alexeylapin.qrsync;
 
-public class Chunk implements Marker {
-
-    public static final int RADIX = 36;
+public class Chunk {
 
     private final int index;
-    private final String data;
+    private final byte[] bytes;
 
-    public Chunk(int index, String data) {
+    public Chunk(int index, byte[] bytes) {
         this.index = index;
-        this.data = data;
+        this.bytes = bytes;
     }
 
-    @Override
-    public String render() {
-        return getPrefix() + data;
+    public int getIndex() {
+        return index;
     }
 
-    public String getPrefix() {
-        return Integer.toString(index, RADIX).toUpperCase() + DELIMITER;
-    }
-
-    public static Chunk parse(String content) {
-        String[] parts = content.split(DELIMITER);
-        return new Chunk(Integer.parseInt(parts[0], RADIX), parts[1]);
+    public byte[] getBytes() {
+        return bytes;
     }
 
 }
