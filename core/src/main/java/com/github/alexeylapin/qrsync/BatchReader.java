@@ -3,7 +3,7 @@ package com.github.alexeylapin.qrsync;
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface ByteReader extends Closeable {
+public interface BatchReader extends Closeable {
 
     boolean next() throws IOException;
 

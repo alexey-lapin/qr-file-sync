@@ -18,4 +18,9 @@ public class Chunk {
         return bytes;
     }
 
+    @Override
+    public String toString() {
+        return "Chunk[" + index + "][" + bytes.length + "]";
+    }
+
 }

@@ -14,4 +14,9 @@ public class Batch {
         return chunks;
     }
 
+    @Override
+    public String toString() {
+        return "Batch[" + chunks.size() + "]";
+    }
+
 }
