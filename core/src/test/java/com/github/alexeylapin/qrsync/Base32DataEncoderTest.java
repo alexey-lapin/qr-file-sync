@@ -6,6 +6,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class Base32DataEncoderTest {
 
+    // Padding 1,3,4,6
+    // bytes | data | padding
+    //     1 |    2 |       6
+    //     2 |    4 |       4
+    //     3 |    5 |       3
+    //     4 |    7 |       1
+    //     5 |    8 |       0
+
     @Test
     void name() {
         Base32DataEncoder encoder = new Base32DataEncoder();
