@@ -14,3 +14,4 @@ pluginManagement {
 
 rootProject.name = "qr-file-sync"
 include("core")
+include("desktop")
